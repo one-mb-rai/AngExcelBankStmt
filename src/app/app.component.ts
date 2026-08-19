@@ -18,29 +18,68 @@ export class AppComponent {
   filterText: string = '';
 
   onFileChange(event: any): void {
-    const target: DataTransfer = <DataTransfer>(event.target);
-    if (target.files.length !== 1) {
-      console.error('Cannot upload multiple files.');
+    const target = event?.target as HTMLInputElement | null;
+    const file = target?.files?.[0];
+
+    if (!file) {
+      console.error('No file selected.');
       return;
     }
 
+    const allowedExtensions = ['.csv', '.xls', '.xlsx'];
+    const fileName = file.name.toLowerCase();
+    const isAllowedFile = allowedExtensions.some(ext => fileName.endsWith(ext));
+
+    if (!isAllowedFile) {
+      console.error('Unsupported file type selected:', file.name);
+      return;
+    }
+
+    console.log('Selected file:', file.name, 'size:', file.size);
+
     const reader: FileReader = new FileReader();
-    reader.onload = (e: any) => {
-      const binaryData: string = e.target.result;
-      const workbook: XLSX.WorkBook = XLSX.read(binaryData, { type: 'binary' });
-
-      // Assuming data is in the first sheet
-      const sheetName: string = workbook.SheetNames[0];
-      const sheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
-
-      // Parse the sheet and store the data
-      const rawData: any = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-      this.data = rawData.filter((row: any[]) => this.isValidDate(row[0])).filter((row: any[]) => row.length === 7);
-      this.data.pop();
-      console.log(this.data); // View the parsed data
+    reader.onerror = () => {
+      console.error('FileReader failed while reading the selected file.', reader.error);
     };
 
-    reader.readAsBinaryString(target.files[0]);
+    reader.onload = (e: any) => {
+      try {
+        const fileData: ArrayBuffer | string = e.target?.result ?? '';
+        if (!fileData) {
+          console.error('File content is empty.');
+          return;
+        }
+
+        const workbook: XLSX.WorkBook = XLSX.read(fileData, {
+          type: 'array',
+          cellDates: true,
+          raw: false,
+        });
+
+        console.log('Workbook sheets:', workbook.SheetNames);
+
+        const sheetName: string = workbook.SheetNames[0];
+        const sheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
+
+        const rawData: any[] = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
+        console.log('Raw parsed rows:', rawData);
+
+        this.data = rawData
+          .filter((row: any[]) => Array.isArray(row) && row.length > 0)
+          .filter((row: any[]) => this.isValidDate(row[0]))
+          .filter((row: any[]) => row.length === 7);
+
+        if (this.data.length && this.data[this.data.length - 1].every((cell: any) => !cell)) {
+          this.data.pop();
+        }
+
+        console.log('Filtered statement rows:', this.data);
+      } catch (error) {
+        console.error('Unable to parse the selected bank statement.', error);
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
   }
 
   // Helper function to check if a value is a valid date

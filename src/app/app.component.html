@@ -2,7 +2,13 @@
   <!-- File Input with Bootstrap Styling -->
   <div class="mb-3">
     <label for="fileInput" class="form-label">Upload File</label>
-    <input type="file" class="form-control" id="fileInput" (change)="onFileChange($event)" />
+    <input
+      type="file"
+      class="form-control"
+      id="fileInput"
+      accept=".csv,.xls,.xlsx"
+      (change)="onFileChange($event)"
+    />
   </div>
 
   <!-- Accordion for Multiple Tables -->
