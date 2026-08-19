@@ -4,9 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production --base-href ./ --output-path docs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "build:gh-pages": "ng build --configuration production --base-href ./ --output-path docs",
     "serve:ssr:AngExcelBankStmt": "node dist/ang-excel-bank-stmt/server/server.mjs"
   },
   "private": true,
