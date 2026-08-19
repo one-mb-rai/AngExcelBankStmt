@@ -60,7 +60,6 @@ export class AppComponent {
 
         const sheetName: string = workbook.SheetNames[0];
         const sheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
-
         const rawData: any[] = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false });
         console.log('Raw parsed rows:', rawData);
 
@@ -82,10 +81,13 @@ export class AppComponent {
     reader.readAsArrayBuffer(file);
   }
 
-  // Helper function to check if a value is a valid date
   isValidDate(value: any): boolean {
+    if (value === null || value === undefined || value === '') {
+      return false;
+    }
+
     const date = new Date(value);
-    return !isNaN(date.getTime()); // Checks if the date is valid
+    return !isNaN(date.getTime());
   }
 
   filteredRows() {

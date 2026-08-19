@@ -2,27 +2,24 @@
   <!-- File Input with Bootstrap Styling -->
   <div class="mb-3">
     <label for="fileInput" class="form-label">Upload File</label>
-    <input
-      type="file"
-      class="form-control"
-      id="fileInput"
-      accept=".csv,.xls,.xlsx"
-      (change)="onFileChange($event)"
-    />
+    <input type="file" class="form-control" id="fileInput" accept=".csv,.xls,.xlsx" (change)="onFileChange($event)" />
   </div>
-
+  <div class="table-responsive" *ngIf="data.length">
+    <input type="text" [(ngModel)]="filterText" placeholder="Filter rows" />
+  </div>
   <!-- Accordion for Multiple Tables -->
   <div class="accordion" id="tablesAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+          aria-expanded="true" aria-controls="collapseOne">
           All Data From Statement
         </button>
       </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#tablesAccordion">
+      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+        data-bs-parent="#tablesAccordion">
         <div class="accordion-body fixed-height">
           <div class="table-responsive" *ngIf="data.length">
-            <input type="text" [(ngModel)]="filterText" placeholder="Filter rows" />
             <table class="table table-bordered table-striped">
               <thead class="table-dark">
                 <tr>
