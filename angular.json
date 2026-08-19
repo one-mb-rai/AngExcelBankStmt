@@ -17,8 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "docs",
-            "baseHref": "./",
+            "outputPath": "dist/ang-excel-bank-stmt",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
